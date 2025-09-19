@@ -1,9 +1,10 @@
-   
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { Button, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
 import PieChart from 'react-native-pie-chart';
+
 const lightblueColor = "rgb(44, 57,103)"
 const height = Dimensions.get('window').height
 
@@ -12,7 +13,7 @@ const fat = 15
 const protein = 60
 
 const totalMacroGram = carb+protein+fat
-const totalCal = 2500
+const totalCal = 2700
 const consumedCal = carb * 4 + fat * 9 + protein * 4
 const carbProc = Math.round(100*(carb)/(totalMacroGram))
 const fatProc = Math.round(100*(fat)/(totalMacroGram))
@@ -25,12 +26,65 @@ const series = [
   {value: carb, color: "dodgerblue", label: {text: carbProc+"%",fontSize:11 }},
 ]
 
+
+
+
+type Food = {
+  id:number;
+  weight: number;
+  name:string
+};
+type Meal = {
+  id: number;
+  numFoods: number;
+  foods:  Food[]
+};
+
+
 export default function Diet() {
+  const [CURR_NUM_MEALS, setCurrNumMeals] = useState(3);
+  const [meals, setMeals] = useState<Meal[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    setMeals((prevMeals: Meal[]) => {
+      const newMeals = Array.from({ length: CURR_NUM_MEALS }, (_, i) => {
+        const existingMeal = prevMeals[i];
+      return existingMeal
+        ? { ...existingMeal, numFoods: existingMeal.foods.length,foods: existingMeal.foods || [], } // update numFoods
+        : { id: i + 1, foods: [], numFoods: 0 }; // new meal
+    });
+    return newMeals;
+  });
+  }, [CURR_NUM_MEALS]);
+
+    const addFoodToMeal = (
+      mealId: number,
+      foodWeight: number,
+      foodName: string
+    ) => {
+      setMeals((prevMeals: Meal[]) =>
+        prevMeals.map((meal) => {
+          if (meal.id !== mealId) return meal;
+
+          
+          const newFood: Food = {
+            id: meal.foods.length + 1, 
+            name: foodName,
+            weight: foodWeight,
+          };
+            return { 
+              ...meal, 
+              foods: [...meal.foods, newFood], 
+              numFoods: meal.foods.length + 1 
+            };
+        })
+      );
+    };
+      
   return (
-
+  
     <View style={styles.container}>
-
       <View style={styles.titleContainer}>
         <Text style={styles.titleText}>DietLog</Text>
         <TouchableOpacity onPress={() => router.push("/Settings/dietsettings")}>
@@ -84,14 +138,15 @@ export default function Diet() {
         </View>
       
       <ScrollView >
+        
         <View style={styles.subtitleContainer}>
           <Text style={styles.subtitle}>Macros</Text>
         </View>
-        <View style={{backgroundColor:lightblueColor, flex: 1,flexDirection:"row"}}>
+
+        <View style={{backgroundColor:lightblueColor, flex: 1,flexDirection:"row", flexShrink:0}}>
           <View style={styles.pieContainer}>
             <PieChart widthAndHeight={pieChartRad} series={series}></PieChart>
           </View>
-
           <View style={[styles.pieContainer, {flexDirection: "column", justifyContent: "space-between", paddingVertical: 60, alignItems: "flex-start", backgroundColor:"lightblueColor", width:30, }, ]}>
             <View style = {[styles.singleIcon,{ backgroundColor: "lightblue",width:20, justifyContent:"flex-start"}]}></View>
             <View style = {[styles.singleIcon,{ backgroundColor: "lightgreen",width:20, justifyContent:"flex-start"}]}></View>
@@ -108,14 +163,20 @@ export default function Diet() {
               <Text style={[styles.caloriesText, {fontSize:12}]}>Carb: {carb}g</Text>
             </View>
           </View>
-          
         </View>
-        
-        
-      
-      
+          {meals.map((meal => 
+          <View key={meal.id} style={styles.mealContainer}>
+            {meal.foods.map((food, index) => (
+              <View style={styles.foodContainer}>
+              </View>
+            ))}
+            <Button
+              title="Add Food"
+              onPress={() => addFoodToMeal(meal.id,1500, "Appwle" )}
+            />
+          </View>
+        ))}
       </ScrollView>
-        
     </View>
   );
 }
@@ -198,5 +259,17 @@ const styles = StyleSheet.create({
     width: "100%",
     height: height * 0.05,
     backgroundColor: "rgb(44, 57,103)"
+  },
+
+  mealContainer:{
+    backgroundColor: "red",
+    width: "100%",
+    flexDirection: "column",
+    flexShrink: 0
+  },
+  foodContainer:{
+    width: 40,
+    height:40,
+    backgroundColor:"black",
   },
 })
