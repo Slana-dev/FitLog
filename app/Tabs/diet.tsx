@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import PieChart from 'react-native-pie-chart';
-
+const seperateColor = "rgba(39, 50, 90, 1)"
 const lightblueColor = "rgb(44, 57,103)"
 const height = Dimensions.get('window').height
 
@@ -27,8 +27,6 @@ const series = [
 ]
 
 
-
-
 type Food = {
   id:number;
   weight: number;
@@ -41,8 +39,22 @@ type Meal = {
 };
 
 
+const SeparatorContainer = ({ typeStyle = "separatorContainer" }: { typeStyle?: string }) => {
+  return (
+    <View  style={(styles as any)[typeStyle]}></View>
+  );
+};
+
+const SubtitleContainer = ({name= "",}) => {
+  return (
+    <View style={styles.subtitleContainer}>
+        <Text style={styles.subtitle}>{name}</Text>
+      </View>
+  )
+}
+
 export default function Diet() {
-  const [CURR_NUM_MEALS, setCurrNumMeals] = useState(3);
+  const [CURR_NUM_MEALS, setCurrNumMeals] = useState(2);
   const [meals, setMeals] = useState<Meal[]>([]);
   const router = useRouter();
 
@@ -53,9 +65,9 @@ export default function Diet() {
       return existingMeal
         ? { ...existingMeal, numFoods: existingMeal.foods.length,foods: existingMeal.foods || [], } // update numFoods
         : { id: i + 1, foods: [], numFoods: 0 }; // new meal
+      });
+      return newMeals;
     });
-    return newMeals;
-  });
   }, [CURR_NUM_MEALS]);
 
     const addFoodToMeal = (
@@ -66,7 +78,6 @@ export default function Diet() {
       setMeals((prevMeals: Meal[]) =>
         prevMeals.map((meal) => {
           if (meal.id !== mealId) return meal;
-
           
           const newFood: Food = {
             id: meal.foods.length + 1, 
@@ -96,10 +107,8 @@ export default function Diet() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.subtitleContainer}>
-        <Text style={styles.subtitle}>Calories</Text>
-      </View>
-        
+      <SubtitleContainer name="Calories"/>
+      
       <View style={styles.caloriesContainer}>
         <View style={styles.singleBoxContainer}>
           <View style={{backgroundColor: lightblueColor, height: 20, width: 70, alignSelf:"center" }}>
@@ -138,10 +147,9 @@ export default function Diet() {
         </View>
       
       <ScrollView >
-        
-        <View style={styles.subtitleContainer}>
-          <Text style={styles.subtitle}>Macros</Text>
-        </View>
+      <SeparatorContainer typeStyle="seperatorSubtitle"/>
+      <SubtitleContainer name = "Macros"/>
+      
 
         <View style={{backgroundColor:lightblueColor, flex: 1,flexDirection:"row", flexShrink:0}}>
           <View style={styles.pieContainer}>
@@ -164,19 +172,35 @@ export default function Diet() {
             </View>
           </View>
         </View>
+
+        <SeparatorContainer typeStyle="seperatorSubtitle"/>
           {meals.map((meal => 
-          <View key={meal.id} style={styles.mealContainer}>
-            {meal.foods.map((food, index) => (
-              <View style={styles.foodContainer}>
+            <View key={meal.id} style={styles.mealContainer}>
+              <View style={styles.subtitleContainer}>
+                <Text style={styles.subtitle}>Meal {meal.id}</Text>
               </View>
-            ))}
-            <Button
-              title="Add Food"
-              onPress={() => addFoodToMeal(meal.id,1500, "Appwle" )}
-            />
-          </View>
+              
+              {meal.foods.map((food, index) => (
+                <View key = {index} style={styles.foodContainer}>
+                </View>
+              ))}
+              <Button
+                
+                title="Add Food"
+                onPress={() => addFoodToMeal(meal.id,1500, "Apple" )}
+              />
+              {meal.id !== meals.length && (
+                <SeparatorContainer typeStyle="seperatorSubtitle"/>
+              )}
+              {meal.id === meals.length && (
+                <View style={styles.footContainer}></View>
+              )}
+            </View>
+            
         ))}
+        
       </ScrollView>
+      
     </View>
   );
 }
@@ -204,11 +228,10 @@ const styles = StyleSheet.create({
   },
   macroContainer: {
     height: height * 0.3,
-    backgroundColor: "rgb(44, 57,103)",
+    backgroundColor: lightblueColor,
     alignItems: "flex-end",
     alignContent: "space-around",
     paddingRight: 15
-    
   },
   caloriesContainer:{
     height: height * 0.08,
@@ -216,7 +239,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 30,
-    backgroundColor: "rgb(44, 57,103)",
+    backgroundColor: lightblueColor,
   },
   caloriesText: {
     color: "white",
@@ -227,7 +250,7 @@ const styles = StyleSheet.create({
     height: 60,
     width: "25%",
     flexDirection: "column",
-    backgroundColor: "rgb(44, 57,103)",
+    backgroundColor: lightblueColor,
     alignItems: "center",
     justifyContent: "center",
     
@@ -235,13 +258,13 @@ const styles = StyleSheet.create({
   singleIcon: {
     height: 20,
     width:20,
-    backgroundColor: "rgb(44, 57,103)",
+    backgroundColor: lightblueColor,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },
   pieContainer:{
-    backgroundColor: "rgb(44, 57,103)",
+    backgroundColor: lightblueColor,
     flexDirection: "row",
     width: "50%",
     height: 200,
@@ -258,18 +281,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     width: "100%",
     height: height * 0.05,
-    backgroundColor: "rgb(44, 57,103)"
+    backgroundColor: lightblueColor
   },
 
   mealContainer:{
     backgroundColor: "red",
     width: "100%",
     flexDirection: "column",
-    flexShrink: 0
+    justifyContent: "center",
+    alignItems: "center"
   },
   foodContainer:{
     width: 40,
     height:40,
     backgroundColor:"black",
   },
+  footContainer:{
+    height: 150,
+    width:"100%",
+    backgroundColor: lightblueColor,
+  },
+  seperatorSubtitle:{
+    height: 5,
+    width:"100%",
+    backgroundColor: seperateColor,
+  },
+  seperatorFood:{
+    height: 1,
+    width:"100%",
+    backgroundColor: "grey",
+  },
+  
 })
