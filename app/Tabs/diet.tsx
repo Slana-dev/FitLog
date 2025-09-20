@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from 'react';
-import { Button, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import PieChart from 'react-native-pie-chart';
 const seperateColor = "rgba(39, 50, 90, 1)"
@@ -54,7 +54,7 @@ const SubtitleContainer = ({name= "",}) => {
 }
 
 export default function Diet() {
-  const [CURR_NUM_MEALS, setCurrNumMeals] = useState(2);
+  const [CURR_NUM_MEALS, setCurrNumMeals] = useState(4);
   const [meals, setMeals] = useState<Meal[]>([]);
   const router = useRouter();
 
@@ -176,7 +176,7 @@ export default function Diet() {
         <SeparatorContainer typeStyle="seperatorSubtitle"/>
           {meals.map((meal => 
             <View key={meal.id} style={styles.mealContainer}>
-              <View style={styles.subtitleContainer}>
+              <View style={[styles.subtitleContainer ,{height: 50, justifyContent:"center"}]}>
                 <Text style={styles.subtitle}>Meal {meal.id}</Text>
               </View>
               
@@ -184,14 +184,15 @@ export default function Diet() {
                 <View key = {index} style={styles.foodContainer}>
                 </View>
               ))}
-              <Button
+              <SeparatorContainer typeStyle="seperatorFood"/>
+              <View style={[styles.subtitleContainer, {paddingLeft:17, justifyContent:"flex-start", paddingTop:15, flexDirection:"row",height: 50}]}>
                 
-                title="Add Food"
-                onPress={() => addFoodToMeal(meal.id,1500, "Apple" )}
-              />
-              {meal.id !== meals.length && (
+                  <Pressable onPress={() =>router.push("/AddFood/addFood") }>
+                    <Text style={{color: "grey", fontSize:15}}> ADD FOOD</Text>
+                  </Pressable>
+               
+              </View>
                 <SeparatorContainer typeStyle="seperatorSubtitle"/>
-              )}
               {meal.id === meals.length && (
                 <View style={styles.footContainer}></View>
               )}
@@ -301,8 +302,12 @@ const styles = StyleSheet.create({
     width:"100%",
     backgroundColor: lightblueColor,
   },
+  wrapperCustom: {
+    borderRadius: 8,
+    padding: 6,
+  },
   seperatorSubtitle:{
-    height: 5,
+    height: 7,
     width:"100%",
     backgroundColor: seperateColor,
   },
