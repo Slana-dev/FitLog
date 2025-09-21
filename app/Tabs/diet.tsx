@@ -187,7 +187,7 @@ export default function Diet() {
               <SeparatorContainer typeStyle="seperatorFood"/>
               <View style={[styles.subtitleContainer, {paddingLeft:17, justifyContent:"flex-start", paddingTop:15, flexDirection:"row",height: 50}]}>
                 
-                  <Pressable onPress={() =>router.push("/AddFood/addFood") }>
+                  <Pressable onPress={() => router.push("/AddFood/addFood") }>
                     <Text style={{color: "grey", fontSize:15}}> ADD FOOD</Text>
                   </Pressable>
                
