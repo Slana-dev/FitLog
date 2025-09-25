@@ -12,44 +12,44 @@ const carb = 120
 const fat = 15
 const protein = 60
 
-const totalMacroGram = carb+protein+fat
+const totalMacroGram = carb + protein + fat
 const totalCal = 2700
 const consumedCal = carb * 4 + fat * 9 + protein * 4
-const carbProc = Math.round(100*(carb)/(totalMacroGram))
-const fatProc = Math.round(100*(fat)/(totalMacroGram))
-const proteinProc = Math.round(100*(protein)/(totalMacroGram))
+const carbProc = Math.round(100 * (carb) / (totalMacroGram))
+const fatProc = Math.round(100 * (fat) / (totalMacroGram))
+const proteinProc = Math.round(100 * (protein) / (totalMacroGram))
 
 const pieChartRad = 150
 const series = [
-  {value: fat, color: "lightblue", label: {text: fatProc+"%", fontSize:11 },},
-  {value: protein, color: "lightgreen", label: {text: proteinProc+"%",fontSize:11  }},
-  {value: carb, color: "dodgerblue", label: {text: carbProc+"%",fontSize:11 }},
+  { value: fat, color: "lightblue", label: { text: fatProc + "%", fontSize: 11 }, },
+  { value: protein, color: "lightgreen", label: { text: proteinProc + "%", fontSize: 11 } },
+  { value: carb, color: "dodgerblue", label: { text: carbProc + "%", fontSize: 11 } },
 ]
 
 
 type Food = {
-  id:number;
+  id: number;
   weight: number;
-  name:string
+  name: string
 };
 type Meal = {
   id: number;
   numFoods: number;
-  foods:  Food[]
+  foods: Food[]
 };
 
 
 const SeparatorContainer = ({ typeStyle = "separatorContainer" }: { typeStyle?: string }) => {
   return (
-    <View  style={(styles as any)[typeStyle]}></View>
+    <View style={(styles as any)[typeStyle]}></View>
   );
 };
 
-const SubtitleContainer = ({name= "",}) => {
+const SubtitleContainer = ({ name = "", }) => {
   return (
     <View style={styles.subtitleContainer}>
-        <Text style={styles.subtitle}>{name}</Text>
-      </View>
+      <Text style={styles.subtitle}>{name}</Text>
+    </View>
   )
 }
 
@@ -62,146 +62,147 @@ export default function Diet() {
     setMeals((prevMeals: Meal[]) => {
       const newMeals = Array.from({ length: CURR_NUM_MEALS }, (_, i) => {
         const existingMeal = prevMeals[i];
-      return existingMeal
-        ? { ...existingMeal, numFoods: existingMeal.foods.length,foods: existingMeal.foods || [], } // update numFoods
-        : { id: i + 1, foods: [], numFoods: 0 }; // new meal
+        return existingMeal
+          ? { ...existingMeal, numFoods: existingMeal.foods.length, foods: existingMeal.foods || [], } // update numFoods
+          : { id: i + 1, foods: [], numFoods: 0 }; // new meal
       });
       return newMeals;
     });
   }, [CURR_NUM_MEALS]);
 
-    const addFoodToMeal = (
-      mealId: number,
-      foodWeight: number,
-      foodName: string
-    ) => {
-      setMeals((prevMeals: Meal[]) =>
-        prevMeals.map((meal) => {
-          if (meal.id !== mealId) return meal;
-          
-          const newFood: Food = {
-            id: meal.foods.length + 1, 
-            name: foodName,
-            weight: foodWeight,
-          };
-            return { 
-              ...meal, 
-              foods: [...meal.foods, newFood], 
-              numFoods: meal.foods.length + 1 
-            };
-        })
-      );
-    };
-      
+  const addFoodToMeal = (
+    mealId: number,
+    foodWeight: number,
+    foodName: string
+  ) => {
+    setMeals((prevMeals: Meal[]) =>
+      prevMeals.map((meal) => {
+        if (meal.id !== mealId) return meal;
+
+        const newFood: Food = {
+          id: meal.foods.length + 1,
+          name: foodName,
+          weight: foodWeight,
+        };
+        return {
+          ...meal,
+          foods: [...meal.foods, newFood],
+          numFoods: meal.foods.length + 1
+        };
+      })
+    );
+  };
+
   return (
-  
+
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.titleText}>DietLog</Text>
         <TouchableOpacity onPress={() => router.push("/Settings/dietsettings")}>
-          <Ionicons 
+          <Ionicons
             name={"settings-outline"}
-            size= {30} 
+            size={30}
             color={"white"}
-            />
+          />
         </TouchableOpacity>
       </View>
 
-      <SubtitleContainer name="Calories"/>
-      
+      <SubtitleContainer name="Calories" />
+
       <View style={styles.caloriesContainer}>
         <View style={styles.singleBoxContainer}>
-          <View style={{backgroundColor: lightblueColor, height: 20, width: 70, alignSelf:"center" }}>
+          <View style={{ backgroundColor: lightblueColor, height: 20, width: 70, alignSelf: "center" }}>
             <Text style={styles.caloriesText}>Total</Text>
           </View>
-          <View style={{backgroundColor: lightblueColor, height: 25, width: 55, alignSelf:"center"}}>
-            <Text style={[styles.caloriesText, {fontWeight: "bold"}]}> {totalCal} </Text>
+          <View style={{ backgroundColor: lightblueColor, height: 25, width: 55, alignSelf: "center" }}>
+            <Text style={[styles.caloriesText, { fontWeight: "bold" }]}> {totalCal} </Text>
           </View>
         </View>
 
         <View style={styles.singleIcon}>
-          <Text style = {{color: "white"}}>=</Text>
+          <Text style={{ color: "white" }}>=</Text>
         </View>
 
         <View style={[styles.singleBoxContainer]}>
-          <View style={{backgroundColor: lightblueColor, height: 20, width: 50, alignSelf:"center"}}>
+          <View style={{ backgroundColor: lightblueColor, height: 20, width: 50, alignSelf: "center" }}>
             <Text style={styles.caloriesText}>Food</Text>
           </View>
-          <View style={{backgroundColor: lightblueColor, height: 25, width: 55, alignSelf:"center"}}>
-            <Text style={[styles.caloriesText, {fontWeight: "bold"}]}>{consumedCal}</Text>
+          <View style={{ backgroundColor: lightblueColor, height: 25, width: 55, alignSelf: "center" }}>
+            <Text style={[styles.caloriesText, { fontWeight: "bold" }]}>{consumedCal}</Text>
           </View>
         </View>
 
-        <View style={[styles.singleIcon,{width:30, justifyContent:"flex-start"}]}>
-          <Text style = {{color: "white"}}>+</Text>
+        <View style={[styles.singleIcon, { width: 30, justifyContent: "flex-start" }]}>
+          <Text style={{ color: "white" }}>+</Text>
         </View>
 
         <View style={styles.singleBoxContainer}>
-          <View style={{backgroundColor: lightblueColor, height: 25, width: 90, alignSelf:"center"}}>
-            <Text style={[styles.caloriesText, {fontWeight: "bold"}]}>Remaining</Text>
+          <View style={{ backgroundColor: lightblueColor, height: 25, width: 90, alignSelf: "center" }}>
+            <Text style={[styles.caloriesText, { fontWeight: "bold" }]}>Remaining</Text>
           </View>
-          <View style={{backgroundColor: lightblueColor, height: 23.5, width: 55, alignSelf:"center"}}>
-            <Text style={{fontSize: 20, fontWeight: "bold", color: "white"}}>{totalCal- consumedCal}</Text>
+          <View style={{ backgroundColor: lightblueColor, height: 23.5, width: 55, alignSelf: "center" }}>
+            <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>{totalCal - consumedCal}</Text>
           </View>
         </View>
-        </View>
-      
-      <ScrollView >
-      <SeparatorContainer typeStyle="seperatorSubtitle"/>
-      <SubtitleContainer name = "Macros"/>
-      
+      </View>
 
-        <View style={{backgroundColor:lightblueColor, flex: 1,flexDirection:"row", flexShrink:0}}>
+      <ScrollView >
+        <SeparatorContainer typeStyle="seperatorSubtitle" />
+        <SubtitleContainer name="Macros" />
+
+
+        <View style={{ backgroundColor: lightblueColor, flex: 1, flexDirection: "row", flexShrink: 0 }}>
           <View style={styles.pieContainer}>
             <PieChart widthAndHeight={pieChartRad} series={series}></PieChart>
           </View>
-          <View style={[styles.pieContainer, {flexDirection: "column", justifyContent: "space-between", paddingVertical: 60, alignItems: "flex-start", backgroundColor:"lightblueColor", width:30, }, ]}>
-            <View style = {[styles.singleIcon,{ backgroundColor: "lightblue",width:20, justifyContent:"flex-start"}]}></View>
-            <View style = {[styles.singleIcon,{ backgroundColor: "lightgreen",width:20, justifyContent:"flex-start"}]}></View>
-            <View style = {[styles.singleIcon,{ backgroundColor: "dodgerblue",width:20, justifyContent:"flex-start"}]}></View>
+          <View style={[styles.pieContainer, { flexDirection: "column", justifyContent: "space-between", paddingVertical: 60, alignItems: "flex-start", backgroundColor: "lightblueColor", width: 30, },]}>
+            <View style={[styles.singleIcon, { backgroundColor: "lightblue", width: 20, justifyContent: "flex-start" }]}></View>
+            <View style={[styles.singleIcon, { backgroundColor: "lightgreen", width: 20, justifyContent: "flex-start" }]}></View>
+            <View style={[styles.singleIcon, { backgroundColor: "dodgerblue", width: 20, justifyContent: "flex-start" }]}></View>
           </View>
-          <View style={[styles.pieContainer, {flexDirection: "column", justifyContent: "space-between", paddingVertical: 60, alignItems: "flex-start", backgroundColor:"lightblueColor", width:40, }, ]}>
-            <View style = {[styles.singleIcon,{ backgroundColor: lightblueColor,width:120, justifyContent:"flex-start"}]}>
-              <Text style={[styles.caloriesText, {fontSize:12}]}>Fat: {fat}g</Text>
+          <View style={[styles.pieContainer, { flexDirection: "column", justifyContent: "space-between", paddingVertical: 60, alignItems: "flex-start", backgroundColor: "lightblueColor", width: 40, },]}>
+            <View style={[styles.singleIcon, { backgroundColor: lightblueColor, width: 120, justifyContent: "flex-start" }]}>
+              <Text style={[styles.caloriesText, { fontSize: 12 }]}>Fat: {fat}g</Text>
             </View>
-            <View style = {[styles.singleIcon,{ backgroundColor: lightblueColor,width:120, justifyContent:"flex-start"}]}>
-              <Text style={[styles.caloriesText, {fontSize:12}]}>Protein: {protein}g</Text>
+            <View style={[styles.singleIcon, { backgroundColor: lightblueColor, width: 120, justifyContent: "flex-start" }]}>
+              <Text style={[styles.caloriesText, { fontSize: 12 }]}>Protein: {protein}g</Text>
             </View>
-            <View style = {[styles.singleIcon,{ backgroundColor: lightblueColor,width:120, justifyContent:"flex-start"}]}>
-              <Text style={[styles.caloriesText, {fontSize:12}]}>Carb: {carb}g</Text>
+            <View style={[styles.singleIcon, { backgroundColor: lightblueColor, width: 120, justifyContent: "flex-start" }]}>
+              <Text style={[styles.caloriesText, { fontSize: 12 }]}>Carb: {carb}g</Text>
             </View>
           </View>
         </View>
 
-        <SeparatorContainer typeStyle="seperatorSubtitle"/>
-          {meals.map((meal => 
-            <View key={meal.id} style={styles.mealContainer}>
-              <View style={[styles.subtitleContainer ,{height: 50, justifyContent:"center"}]}>
-                <Text style={styles.subtitle}>Meal {meal.id}</Text>
-              </View>
-              
-              {meal.foods.map((food, index) => (
-                <View key = {index} style={styles.foodContainer}>
-                </View>
-              ))}
-              <SeparatorContainer typeStyle="seperatorFood"/>
-              <View style={[styles.subtitleContainer, {paddingLeft:17, justifyContent:"flex-start", paddingTop:15, flexDirection:"row",height: 50}]}>
-                
-                  <Pressable onPress={() => router.push("/AddFood/addFood") }>
-                    <Text style={{color: "grey", fontSize:15}}> ADD FOOD</Text>
-                  </Pressable>
-               
-              </View>
-                <SeparatorContainer typeStyle="seperatorSubtitle"/>
-              {meal.id === meals.length && (
-                <View style={styles.footContainer}></View>
-              )}
+        <SeparatorContainer typeStyle="seperatorSubtitle" />
+        {meals.map((meal =>
+          <View key={meal.id} style={styles.mealContainer}>
+            <View style={[styles.subtitleContainer, { height: 50, justifyContent: "center" }]}>
+              <Text style={styles.subtitle}>Meal {meal.id}</Text>
             </View>
-            
+
+            {meal.foods.map((food, index) => (
+              <View key={index} style={styles.foodContainer}>
+              </View>
+            ))}
+            <SeparatorContainer typeStyle="seperatorFood" />
+
+            <View style={[styles.subtitleContainer, { paddingLeft: 17, justifyContent: "flex-start", flexDirection: "row", height: 50, alignItems: "center" }]}>
+              <Pressable
+                onPress={() => router.push("/AddFood/addFood")}
+              >
+                {({ pressed }) => (
+                  <Text style={{ color: !pressed ? "white" : "grey", fontSize: 15 }}> ADD FOOD </Text>)}
+              </Pressable>
+            </View>
+            <SeparatorContainer typeStyle="seperatorSubtitle" />
+
+            {meal.id === meals.length && (
+              <View style={styles.footContainer}></View>
+            )}
+          </View>
+
         ))}
-        
       </ScrollView>
-      
     </View>
   );
 }
@@ -234,7 +235,7 @@ const styles = StyleSheet.create({
     alignContent: "space-around",
     paddingRight: 15
   },
-  caloriesContainer:{
+  caloriesContainer: {
     height: height * 0.08,
     flexDirection: "row",
     alignItems: "center",
@@ -247,24 +248,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     alignSelf: "center",
   },
-  singleBoxContainer:{
+  singleBoxContainer: {
     height: 60,
     width: "25%",
     flexDirection: "column",
     backgroundColor: lightblueColor,
     alignItems: "center",
     justifyContent: "center",
-    
+
   },
   singleIcon: {
     height: 20,
-    width:20,
+    width: 20,
     backgroundColor: lightblueColor,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },
-  pieContainer:{
+  pieContainer: {
     backgroundColor: lightblueColor,
     flexDirection: "row",
     width: "50%",
@@ -272,12 +273,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center"
   },
-  subtitle:{
-    fontWeight:"bold",
+  subtitle: {
+    fontWeight: "bold",
     fontSize: 20,
     color: "white"
   },
-  subtitleContainer:{
+  subtitleContainer: {
     justifyContent: "flex-end",
     paddingHorizontal: 30,
     width: "100%",
@@ -285,36 +286,36 @@ const styles = StyleSheet.create({
     backgroundColor: lightblueColor
   },
 
-  mealContainer:{
+  mealContainer: {
     backgroundColor: "red",
     width: "100%",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center"
   },
-  foodContainer:{
+  foodContainer: {
     width: 40,
-    height:40,
-    backgroundColor:"black",
+    height: 40,
+    backgroundColor: "black",
   },
-  footContainer:{
+  footContainer: {
     height: 150,
-    width:"100%",
+    width: "100%",
     backgroundColor: lightblueColor,
   },
   wrapperCustom: {
     borderRadius: 8,
     padding: 6,
   },
-  seperatorSubtitle:{
+  seperatorSubtitle: {
     height: 7,
-    width:"100%",
+    width: "100%",
     backgroundColor: seperateColor,
   },
-  seperatorFood:{
+  seperatorFood: {
     height: 1,
-    width:"100%",
+    width: "100%",
     backgroundColor: "grey",
   },
-  
+
 })
