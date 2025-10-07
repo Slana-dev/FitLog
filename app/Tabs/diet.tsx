@@ -8,22 +8,20 @@ const seperateColor = "rgba(39, 50, 90, 1)"
 const lightblueColor = "rgb(44, 57,103)"
 const height = Dimensions.get('window').height
 
-const carb = 120
-const fat = 15
-const protein = 60
+import DietData from "../Data/dietData";
 
-const totalMacroGram = carb + protein + fat
+const totalMacroGram = DietData.carb + DietData.protein + DietData.fat
 const totalCal = 2700
-const consumedCal = carb * 4 + fat * 9 + protein * 4
-const carbProc = Math.round(100 * (carb) / (totalMacroGram))
-const fatProc = Math.round(100 * (fat) / (totalMacroGram))
-const proteinProc = Math.round(100 * (protein) / (totalMacroGram))
+const consumedCal = DietData.carb * 4 + DietData.fat * 9 + DietData.protein * 4
+const carbProc = Math.round(100 * (DietData.carb) / (totalMacroGram))
+const fatProc = Math.round(100 * (DietData.fat) / (totalMacroGram))
+const proteinProc = Math.round(100 * (DietData.protein) / (totalMacroGram))
 
 const pieChartRad = 150
 const series = [
-  { value: fat, color: "lightblue", label: { text: fatProc + "%", fontSize: 11 }, },
-  { value: protein, color: "lightgreen", label: { text: proteinProc + "%", fontSize: 11 } },
-  { value: carb, color: "dodgerblue", label: { text: carbProc + "%", fontSize: 11 } },
+  { value: DietData.fat, color: "lightblue", label: { text: fatProc + "%", fontSize: 11 }, },
+  { value: DietData.protein, color: "lightgreen", label: { text: proteinProc + "%", fontSize: 11 } },
+  { value: DietData.carb, color: "dodgerblue", label: { text: carbProc + "%", fontSize: 11 } },
 ]
 
 
@@ -162,13 +160,13 @@ export default function Diet() {
           </View>
           <View style={[styles.pieContainer, { flexDirection: "column", justifyContent: "space-between", paddingVertical: 60, alignItems: "flex-start", backgroundColor: "lightblueColor", width: 40, },]}>
             <View style={[styles.singleIcon, { backgroundColor: lightblueColor, width: 120, justifyContent: "flex-start" }]}>
-              <Text style={[styles.caloriesText, { fontSize: 12 }]}>Fat: {fat}g</Text>
+              <Text style={[styles.caloriesText, { fontSize: 12 }]}>Fat: {DietData.fat}g</Text>
             </View>
             <View style={[styles.singleIcon, { backgroundColor: lightblueColor, width: 120, justifyContent: "flex-start" }]}>
-              <Text style={[styles.caloriesText, { fontSize: 12 }]}>Protein: {protein}g</Text>
+              <Text style={[styles.caloriesText, { fontSize: 12 }]}>Protein: {DietData.protein}g</Text>
             </View>
             <View style={[styles.singleIcon, { backgroundColor: lightblueColor, width: 120, justifyContent: "flex-start" }]}>
-              <Text style={[styles.caloriesText, { fontSize: 12 }]}>Carb: {carb}g</Text>
+              <Text style={[styles.caloriesText, { fontSize: 12 }]}>Carb: {DietData.carb}g</Text>
             </View>
           </View>
         </View>

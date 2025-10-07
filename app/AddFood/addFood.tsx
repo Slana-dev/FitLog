@@ -1,10 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Dimensions, StyleSheet, TextInput, View } from "react-native";
+import { Dimensions, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 
 const height = Dimensions.get('window').height
 
-const darkBlue = "rgba(39, 50, 90, 1)"
+const darkBlue = "rgb(30,38,68)"
 const lightblueColor = "rgb(44, 57,103)"
 
 
@@ -18,9 +19,21 @@ const SeparatorContainer = ({ typeStyle = "separatorContainer" }: { typeStyle?: 
 
 export default function dietSettings() {
   const [text, setText] = useState('');
+  const router = useRouter();
   return (
     <View style={styles.container}>
-      <View style={[styles.topContainer, { backgroundColor: darkBlue, }]}>
+      <View style={[styles.topContainer, { paddingLeft: 10, backgroundColor: darkBlue, height: 70, alignItems: "flex-end", justifyContent: "flex-start" }]}>
+        <TouchableOpacity onPress={() => router.back()} >
+          <Ionicons
+            name={"arrow-back-sharp"}
+            size={30}
+            color={"white"}
+          />
+        </TouchableOpacity>
+      </View>
+      <View style={[styles.topContainer, { backgroundColor: darkBlue, height: 60 }]}>
+
+
         <View style={[styles.searchContainer, {}]}>
           <Ionicons
             name={"search-sharp"}
@@ -71,14 +84,14 @@ const styles = StyleSheet.create({
     backgroundColor: lightblueColor,
     alignItems: "center",
     alignContent: "space-around",
-    paddingRight: 15,
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
+
   },
   searchContainer: {
-    height: 45,
+    height: 40,
     width: "80%",
-    backgroundColor: "black",
+    backgroundColor: lightblueColor,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
