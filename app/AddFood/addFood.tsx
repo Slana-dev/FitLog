@@ -32,8 +32,6 @@ export default function dietSettings() {
         </TouchableOpacity>
       </View>
       <View style={[styles.topContainer, { backgroundColor: darkBlue, height: 60 }]}>
-
-
         <View style={[styles.searchContainer, {}]}>
           <Ionicons
             name={"search-sharp"}
@@ -49,11 +47,9 @@ export default function dietSettings() {
             defaultValue={text}
           >
           </TextInput>
-
         </View>
       </View>
       <SeparatorContainer typeStyle="seperator" />
-
     </View>
   );
 }
@@ -86,7 +82,6 @@ const styles = StyleSheet.create({
     alignContent: "space-around",
     flexDirection: "row",
     justifyContent: "center",
-
   },
   searchContainer: {
     height: 40,
