@@ -1,22 +1,24 @@
 import moment from 'moment';
-import React, { useRef, useState } from "react";
-import { Animated, Dimensions, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+
+import { Animated, Dimensions, Keyboard, Modal, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 const darkBlue = "rgb(30,38,68)"
 const lightblueColor = "rgb(44, 57,103)"
 const height = Dimensions.get('window').height
 const width = Dimensions.get('window').width
 const gainColor = "lightgreen"
 
-
-
-
 export default function Index() {
 
   const today = moment();
-  const [selected, setSelected] = useState(today.format('YYYY-MM-DD'));
+  const [selectedDate, setSelectedDate] = useState(today.format('YYYY-MM-DD'));
+  const [selectedDateDay, setSelectedDateDay] = useState(today.format('DD'));
+  const [selectedDateLabel, setSelectedDateLabel] = useState(today.format('ddd'));
   const [weightPopup, setWeightPopupVisible] = useState(false);
+  const [WeightInput, setWeightInput] = useState("");
   const startOfWeek = today.clone().startOf('isoWeek');
-  const slideAnim = useRef(new Animated.Value(1000)).current;
+  const slideAnim = useRef(new Animated.Value(1300)).current;
+  const inputRef = useRef<TextInput>(null);
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = startOfWeek.clone().add(i, 'days');
     return {
@@ -26,44 +28,100 @@ export default function Index() {
     };
   });
 
-  const changeWeight = (date: string) => {
-    setSelected(date);
+  const changeWeight = (date: string, dateLabel: string, dateDay: string) => {
+    setSelectedDate(date);
+    setSelectedDateDay(dateDay);
+    setSelectedDateLabel(dateLabel);
     setWeightPopupVisible(true);
     slideIn();
   };
   const slideIn = () => {
     Animated.timing(slideAnim, {
-      toValue: 300,
+      toValue: 230,
       duration: 300,
       useNativeDriver: true,
     }).start(() => setWeightPopupVisible(true));
   };
 
   const slideOut = () => {
+    Keyboard.dismiss()
     Animated.timing(slideAnim, {
-      toValue: 1000,
+      toValue: 3000,
       duration: 300,
       useNativeDriver: true,
     }).start(() => setWeightPopupVisible(false));
   };
+  const submitWeight = () => {
+    slideOut()
+    return
+  };
+  useEffect(() => {
+    if (weightPopup) {
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [weightPopup]);
+
   return (
     <View style={styles.container}>
       <Modal
         visible={weightPopup}
         transparent={true}
         animationType="none"
-        allowSwipeDismissal={true}
 
         onRequestClose={() => {
           slideOut();
-          setWeightPopupVisible(!weightPopup);
         }}>
-        <Animated.View style={[styles.popup, { backgroundColor: "white", transform: [{ translateY: slideAnim }] }]}>
-          <Text>hello</Text>
-        </Animated.View>
-        <Pressable onPress={slideOut}>
-          <Text style={{ color: 'white' }}>Close</Text>
-        </Pressable>
+        {weightPopup && (
+          <Animated.View style={[styles.popup, { transform: [{ translateY: slideAnim }] }]}>
+            <View style={{ backgroundColor: "darkgrey", width: 140, alignItems: "center" }}>
+              <Text style={[styles.subtitle, { fontSize: 20 }]}>{selectedDateLabel} {selectedDateDay}th </Text>
+            </View>
+            <View style={{ backgroundColor: "grey", width: 140, alignItems: "center" }}>
+              <TextInput
+                ref={inputRef}
+                style={styles.input}
+                placeholderTextColor="grey"
+                keyboardType="number-pad"
+                returnKeyType="next"
+                onChangeText={value => {
+                  if (value.length > 5) return;
+                  const cleaned = value.replace(/[^0-9.,]/g, "");
+                  const firstDot = cleaned.indexOf(".");
+                  const firstComma = cleaned.indexOf(",");
+
+                  if (firstDot !== -1 && cleaned.slice(firstDot + 1).includes(".")) return;
+                  if (firstComma !== -1 && cleaned.slice(firstComma + 1).includes(",")) return;
+                  if (firstDot !== -1 && firstComma !== -1) {
+                    if (firstDot < firstComma) {
+                      setWeightInput(cleaned.replace(",", ""));
+                    } else {
+                      setWeightInput(cleaned.replace(".", ""));
+                    }
+                    return;
+                  }
+                  setWeightInput(cleaned);
+                }}
+              />
+
+            </View>
+            <View style={{ backgroundColor: "grey", width: 150, flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 13 }}>
+              <View style={{ backgroundColor: "grey", width: 70, alignItems: "center" }}>
+                <Pressable onPress={slideOut}>
+                  <Text style={[styles.subtitle, { fontSize: 17 }]}>Cancel</Text>
+                </Pressable>
+              </View>
+              <View style={{ backgroundColor: "grey" }}>
+                <Pressable onPress={submitWeight}>
+                  <Text style={[styles.subtitle, { fontSize: 17, color: gainColor }]}>Save</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Animated.View>)}
+
+
       </Modal>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Weight</Text>
@@ -92,10 +150,10 @@ export default function Index() {
             key={d.date}
             style={[
               styles.day,
-              d.date === selected && styles.selectedDay,
+              d.date === selectedDate && styles.selectedDay,
               d.date === today.format('YYYY-MM-DD') && styles.todayDay,
             ]}
-            onPress={() => changeWeight(d.date)}
+            onPress={() => changeWeight(d.date, d.label, d.dayNumber)}
           >
             <Text style={styles.weightFont}>{d.label}</Text>
             <Text style={styles.number}>{d.dayNumber}</Text>
@@ -137,6 +195,13 @@ const styles = StyleSheet.create({
   selectedDay: {
     backgroundColor: 'white',
   },
+  input: {
+    color: "white",
+    height: 45,
+    width: 80,
+    fontSize: 20,
+    margin: 0
+  },
   todayDay: {
     backgroundColor: gainColor,
   },
@@ -153,17 +218,18 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   popup: {
-    height: height * 0.12,
-    width: 200,
+    height: 110,
+    width: 190,
     alignSelf: "center",
-    backgroundColor: lightblueColor,
-    flexDirection: "row",
+    backgroundColor: "grey",
+    flexDirection: "column",
     alignItems: "center",
-    paddingHorizontal: 10,
-    paddingTop: height * 0.01,
+    justifyContent: "center",
+    paddingTop: 30,
+    paddingBottom: 30,
+    borderWidth: 2,
+    borderColor: "grey",
     borderRadius: 10,
-
-
 
   },
   titleContainer: {
@@ -217,3 +283,4 @@ const styles = StyleSheet.create({
 
 
 })
+
